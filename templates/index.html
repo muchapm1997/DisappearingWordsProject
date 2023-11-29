@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three Columns Layout</title>
+    <style>
+        /* Global styling for the page */
+        body {
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            height: 100vh;
+            background-color: white;
+        }
+
+        /* Styling for the center column */
+        .center-column {
+            grid-column: 2;
+            padding: 20px;
+        }
+
+        /* Styling for the left and right columns */
+        .left-column, .right-column {
+            grid-column: 1;
+            background-color: white;
+        }
+
+        /* Styling for the textarea */
+        textarea {
+            width: 100%;
+            height: 300px;
+            font-family: Arial, sans-serif;
+            border: none;
+            outline: none;
+            resize: none;
+            transition: opacity 1s ease;
+        }
+
+        /* Styling for the placeholder text in the textarea */
+        textarea::placeholder {
+            color: gray;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Left column placeholder -->
+    <div class="left-column"></div>
+
+    <!-- Center column with textarea and word count display -->
+    <div class="center-column">
+        <form id="textForm" method="POST">
+            <!-- Textarea for typing -->
+            <textarea id="text" name="text" required placeholder="Type text..."></textarea>
+            <!-- Display for the word count -->
+            <h1 id="wordsDisplay">Words: 0</h1>
+        </form>
+        <!-- Button to reset the text -->
+        <button type="button" onclick="resetText()">Reset Text</button>
+    </div>
+
+    <!-- Right column placeholder -->
+    <div class="right-column"></div>
+
+    <script>
+        // Get references to the textarea and word count display elements
+        const textarea = document.getElementById('text');
+        const wordsDisplay = document.getElementById('wordsDisplay');
+
+        // Set the interval time for decreasing opacity (in milliseconds)
+        const intervalTime = 5000;
+        let timer;
+
+        // Function to decrease opacity every 5 seconds
+        function decreaseOpacity() {
+            const currentOpacity = parseFloat(getComputedStyle(textarea).opacity);
+            if (currentOpacity > 0) {
+                textarea.style.opacity = (currentOpacity - 0.1).toFixed(1);
+                timer = setTimeout(decreaseOpacity, intervalTime / 10);
+            } else {
+                // Reset opacity, clear text, set placeholder, and reset timer after text disappears
+                textarea.style.opacity = 1;
+                textarea.value = '';
+                textarea.placeholder = 'Type text...';
+                clearTimeout(timer);
+            }
+        }
+
+        // Start decreasing opacity process after text input
+        textarea.addEventListener('input', () => {
+            clearTimeout(timer);
+            textarea.style.opacity = 1;
+            timer = setTimeout(decreaseOpacity, intervalTime);
+
+            // Count words in the textarea
+            const words = textarea.value.trim().split(/\s+/).filter(Boolean).length;
+            wordsDisplay.textContent = `Words: ${words}`;
+        });
+
+        // Function to reset text and word count
+        function resetText() {
+            textarea.value = '';
+            wordsDisplay.textContent = 'Words: 0';
+            clearTimeout(timer);
+        }
+    </script>
+</body>
+
+</html>
